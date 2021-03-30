@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -27,19 +29,19 @@ class SpeechApi {
     return isAvailable;
   }
 
-  static Future<void> textTospeech ({
-    @required   String text,
+  static void textTospeech({
+    @required String text,
     @required ValueChanged<bool> onResult,
   }) async {
     if (text != null && text.isNotEmpty) {
       await _flutterTts.setLanguage('fr-FR');
       await _flutterTts.setSpeechRate(1.0);
-      await  _flutterTts.setPitch(1.0);
-      var result = await _flutterTts.speak(text);
-      if (result == 1) {
-        var isPlaying = true; 
-        onResult(isPlaying);
-      }
+      await _flutterTts.setPitch(1.0);
+      _flutterTts.setCompletionHandler(() {
+        bool isFinishing = true;
+        onResult(isFinishing);
+      });
+      await _flutterTts.speak(text);
     }
-  } 
+  }
 }

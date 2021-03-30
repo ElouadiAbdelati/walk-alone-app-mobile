@@ -11,24 +11,19 @@ class Command {
 }
 
 class Utils {
-   static bool isPlaying =false;
-  static Future<void>  scanText(String rawText) async {
+  static void scanText({
+      @required String rawText, @required ValueChanged<bool> onResult}) async {
     final text = rawText.toLowerCase();
-    
     if (text.contains("start")) {
-        await textToSpeech(Command.start);
-    } 
+       textToSpeech(
+          text:Command.start,
+          onResult: (_isFinishing) => {onResult(_isFinishing)});
+    }
   }
 
-  static Future<void>  textToSpeech(String text) async {
-     await SpeechApi.textTospeech(
-      onResult: (_isPlaying)=> {
-            
-     }, text: text
-    );
-
+  static void textToSpeech({
+      @required String text, @required ValueChanged<bool> onResult}) async {
+      SpeechApi.textTospeech(
+        onResult: (_isFinishing) => {onResult(_isFinishing)}, text: text);
   }
-  
-
 }
-
