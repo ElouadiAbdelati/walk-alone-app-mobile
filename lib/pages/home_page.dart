@@ -50,7 +50,9 @@ class _SpeechScreenState extends State<HomePage> {
           setState(() => this._isListening = isListening);
           if (!isListening) {
             Future.delayed(Duration(seconds: 1), () {
-              Utils.scanText(rawText: _text, onResult: (value) => {});
+              Utils.scanText(rawText: _text, onResult: (value) => {
+                 toggleRecording() 
+              });
             });
           }
         },
