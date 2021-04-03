@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:highlight_text/highlight_text.dart';
+import 'package:walk_alone/actions/maps.dart';
+import 'package:walk_alone/actions/welcome.dart';
 import '../api/speech_api.dart';
 import '../utils.dart';
-import 'package:flutter/foundation.dart';
+import '../actions/subject.dart';
+import '../actions/welcome.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -50,15 +53,20 @@ class _SpeechScreenState extends State<HomePage> {
           setState(() => this._isListening = isListening);
           if (!isListening) {
             Future.delayed(Duration(seconds: 1), () {
-              Utils.scanText(rawText: _text, onResult: (value) => {
-                 toggleRecording() 
-              });
+              if (Subject.SUBJECT == Subject.NONE_SUBJECT) {
+                Subject.findSubject(
+                    rawText: this._text,
+                    onResult: (value) => {toggleRecording()});
+              } else if (Subject.SUBJECT == Subject.MAPS_SUBJECT) {
+                Maps.mapsSubject(
+                    text: this._text, onResult: (value) => {toggleRecording()});
+              }
             });
           }
         },
       );
 
   void _textToSpeech() {
-    Utils.scanText(rawText: "start", onResult: (value) => {toggleRecording()});
+    Welcome.index(onResult: (value) => {toggleRecording()});
   }
 }

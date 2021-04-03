@@ -5,48 +5,20 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
 class Command {
-  static final all = [start, destination, browser2];
-
-  static const start = 'bienvenue a walk alone comment puis-je vous aider';
+  
   static const destination = 'je veux aller à';
-  static const browser2 = 'go to';
+  static const confirm = 'oui';
+  static const cancel = 'annuler';
+}
+
+class Answer {
+ static const subjectNotDefined = 'Le sujet n\'a pas été déterminé. Veuillez réessayer';
+ static const start = 'bienvenue a walk alone comment puis-je vous aider';
+ static const cancel="la demande a été annulée";
 }
 
 class Utils {
-  static void scanText(
-      {@required String rawText, @required ValueChanged<bool> onResult}) async {
-    final text = rawText.toLowerCase();
-    if (text.contains("start")) {
-      //start the interaction with the user
-      textToSpeech(
-          text: Command.start,
-          onResult: (_isFinishing) => {onResult(_isFinishing)});
 
-    } else if (text.contains(Command.destination)) {
-      //get body text
-      var body =
-          await getTextAfterCommand(text: text, command: Command.destination);
-      //find the user's location
-      Position position = await determinePosition();
-
-      //get all destinations exist
-    //  http.Response response = await GoogleMapsApi.findDestinations(position, body);
-      //print(response);
-         int response = await GoogleMapsApi.simulationFindDestinations();
-
-      /* if only one destination is found, confirm the position by the user
-          if not, get one of them
-      */
-      if (response==1 ) {
-          body = body+ " la destination est trouvé voulez-vous confirmer ";
-      } else {
-          
-      }
-
-      textToSpeech(
-          text: body, onResult: (_isFinishing) => {onResult(_isFinishing)});
-    }
-  }
 
   static void textToSpeech(
       {@required String text, @required ValueChanged<bool> onResult}) async {
@@ -104,4 +76,6 @@ class Utils {
     // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
   }
+
+  
 }
