@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../api/speech_api.dart';
 import 'api/google_maps_api.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +17,7 @@ class Answer {
  static const subjectNotDefined = 'Le sujet n\'a pas été déterminé. Veuillez réessayer';
  static const start = 'bienvenue a walk alone comment puis-je vous aider';
  static const cancel="la demande a été annulée";
+  static const confirm="voulez-vous confirmer ?";
 }
 
 class Utils {
@@ -76,6 +79,6 @@ class Utils {
     // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
   }
-
   
+    
 }
