@@ -67,6 +67,8 @@ class _SpeechScreenState extends State<HomePage> {
       );
 
   void _textToSpeech() {
-    Welcome.index(onResult: (value) => {toggleRecording()});
+    if (!_isListening) {
+      Welcome.index(onResult: (value) => {toggleRecording()});
+    }
   }
 }

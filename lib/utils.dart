@@ -11,10 +11,11 @@ class Command {
   static const destination = 'je veux aller à';
   static const confirm = 'oui';
   static const cancel = 'annuler';
+  static const location="je suis où";
 }
 
 class Answer {
- static const subjectNotDefined = 'Le sujet n\'a pas été déterminé. Veuillez réessayer';
+ static const subjectNotDefined = "Le sujet n'a pas été déterminé. Veuillez réessayer";
  static const start = 'bienvenue a walk alone comment puis-je vous aider';
  static const cancel="la demande a été annulée";
   static const confirm="voulez-vous confirmer ?";
