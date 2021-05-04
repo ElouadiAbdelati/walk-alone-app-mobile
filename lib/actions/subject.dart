@@ -6,7 +6,7 @@ import 'package:walk_alone/utils.dart';
 class Subject {
   static final MAPS_SUBJECT = 1;
   static final NONE_SUBJECT = 0;
-
+  static final LOCATION_SUBJECT = 2;
   static int SUBJECT = NONE_SUBJECT;
 
   static void findSubject(
@@ -15,8 +15,16 @@ class Subject {
     if (subject == MAPS_SUBJECT) {
       Maps.mapsSubject(text: rawText, onResult: (value) => {onResult(value)});
     } else if (subject == NONE_SUBJECT) {
-       SpeechApi.textTospeech(
-        onResult: (_isFinishing) => {onResult(_isFinishing)}, text: Answer.subjectNotDefined);
+      SpeechApi.textTospeech(
+          onResult: (_isFinishing) => {onResult(_isFinishing)},
+          text: Answer.subjectNotDefined);
+    } else if (subject == LOCATION_SUBJECT) {
+      SpeechApi.textTospeech(
+          onResult: (_isFinishing) => {onResult(_isFinishing)}, text: "good");
+
+      var position = await Utils.determinePosition();
+      print({position});
+      // print("hehjhjdhj");
     }
   }
 
@@ -25,6 +33,9 @@ class Subject {
 
     if (text.contains(Command.destination)) {
       SUBJECT = MAPS_SUBJECT;
+      return SUBJECT;
+    } else if (text.contains(Command.location)) {
+      SUBJECT = LOCATION_SUBJECT;
       return SUBJECT;
     }
     return NONE_SUBJECT;

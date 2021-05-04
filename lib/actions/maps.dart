@@ -50,22 +50,19 @@ class Maps {
       if (choice == -1) {
         body = "Le choix n'existe pas. Veuillez réessayer";
       } else {
-        body = destinations[choice-1] + Answer.confirm;
+        body = destinations[choice - 1] + Answer.confirm;
         multipleDestinations = false;
         ifAskedToConfirm = true;
       }
     } else if (text.contains(Command.confirm) && ifAskedToConfirm) {
       body = "ok";
       ifAskedToConfirm = false;
-       userTalkAfterTextToSpeech = false;
+      userTalkAfterTextToSpeech = false;
     } else if (text.contains(Command.cancel) && ifAskedToConfirm) {
       body = Answer.cancel;
       ifAskedToConfirm = false;
       Subject.SUBJECT = Subject.NONE_SUBJECT;
       userTalkAfterTextToSpeech = false;
-    }
-
-    return body;
+    } else if (text.contains(Command.location)) return body;
   }
-  
 }
