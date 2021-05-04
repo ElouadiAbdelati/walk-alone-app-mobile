@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:walk_alone/actions/maps.dart';
 import 'package:walk_alone/api/speech_api.dart';
 import 'package:walk_alone/utils.dart';
@@ -11,7 +12,7 @@ class Subject {
 
   static void findSubject(
       {@required String rawText, @required ValueChanged<bool> onResult}) async {
-    var subject = await scanText(rawText);
+    var subject = await _scanText(rawText);
     if (subject == MAPS_SUBJECT) {
       Maps.mapsSubject(text: rawText, onResult: (value) => {onResult(value)});
     } else if (subject == NONE_SUBJECT) {
@@ -28,7 +29,7 @@ class Subject {
     }
   }
 
-  static Future<int> scanText(String text) async {
+  static Future<int> _scanText(String text) async {
     text = text.toLowerCase();
 
     if (text.contains(Command.destination)) {

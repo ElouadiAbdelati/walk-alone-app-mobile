@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:walk_alone/actions/subject.dart';
 import 'package:walk_alone/api/google_maps_api.dart';
+import 'package:walk_alone/model/Destination.dart';
 import 'package:walk_alone/utils.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,10 +9,11 @@ class Maps {
   static bool ifAskedToConfirm = false;
   static bool userTalkAfterTextToSpeech = true;
   static bool multipleDestinations = false;
-  static List<String> destinations = new List();
+  static List<Destiantion> destinations = new List();
   static void mapsSubject(
       {@required String text, @required ValueChanged<bool> onResult}) async {
     var body = await scanText(text);
+
     if (userTalkAfterTextToSpeech) {
       Utils.textToSpeech(
           text: body, onResult: (_isFinishing) => {onResult(_isFinishing)});
@@ -27,17 +29,19 @@ class Maps {
     if (text.contains(Command.destination)) {
       body = await Utils.getTextAfterCommand(
           text: text, command: Command.destination);
-      //http.Response response = await GoogleMapsApi.findDestinations(body);
-      int response = 2;
-      if (response == 1) {
-        body = body + " la destination est trouvé voulez-vous confirmer ";
+      if (body == '') {
+        return body = 'djkcsndchniosd';
+      }
+      destinations = await GoogleMapsApi.findDestinations(body);
+      //print(destinations);
+      if (destinations.length == 1) {
+        body = destinations[0].adr +
+            " la destination est trouvé voulez-vous confirmer ";
         ifAskedToConfirm = true;
       } else {
-        destinations.add("casa");
-        destinations.add("marrakech");
         multipleDestinations = true;
         body =
-            "Nous avons trouvé 2 destinations, choisissez-en une. 1: Casa 2: Marrakech";
+            "Nous avons trouvé 2 destinations, choisissez-en une. 1 : Casa 2: Marrakech";
       }
     } else if (multipleDestinations) {
       int choice = -1;
@@ -50,7 +54,7 @@ class Maps {
       if (choice == -1) {
         body = "Le choix n'existe pas. Veuillez réessayer";
       } else {
-        body = destinations[choice - 1] + Answer.confirm;
+        body = destinations[choice - 1].adr + Answer.confirm;
         multipleDestinations = false;
         ifAskedToConfirm = true;
       }

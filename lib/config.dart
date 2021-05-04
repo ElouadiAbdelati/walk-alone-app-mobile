@@ -3,6 +3,6 @@
 class Config {
 
 
-  static String API = 'http://walk_alone/';
+  static String API = 'placesmapsapp.herokuapp.com';
   
 }
