@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../api/speech_api.dart';
+import './api/speech_api.dart';
 import 'api/google_maps_api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
