@@ -1,4 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:ffi';
+import 'dart:typed_data';
+
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:walk_alone/model/DistanceMatrix.dart';
 
 import './api/speech_api.dart';
 import 'api/google_maps_api.dart';
@@ -7,23 +13,28 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
 class Command {
-  
   static const destination = 'je veux aller à';
   static const confirm = 'oui';
   static const cancel = 'annuler';
-  static const location="je suis où";
+  static const location = "je suis où";
 }
 
 class Answer {
- static const subjectNotDefined = "Le sujet n'a pas été déterminé. Veuillez réessayer";
- static const start = 'bienvenue a walk alone comment puis-je vous aider';
- static const cancel="la demande a été annulée";
-  static const confirm="voulez-vous confirmer ?";
+  static const subjectNotDefined =
+      "Le sujet n'a pas été déterminé. Veuillez réessayer";
+  static const start = 'bienvenue a walk alone comment puis-je vous aider';
+  static const cancel = "la demande a été annulée";
+  static const confirm = "voulez-vous confirmer ?";
+  static const distaneToFinish = "Il vous reste, ";
+  static const currentPosition = "Votre position actuelle est : ";
+  static const blAConnecte = "Veuillez activer votre bluetooth et entrer le mot de passe bluetooth  ";
+  static const blNonConnecte = "Veuillez vérifier la connexion avec bluetooth ou réssayer ultérieurement ";
+  
+  static const finishWalking =
+      "Félicitation, vous êtes arrivés à votre destination. Merci.";
 }
 
 class Utils {
-
-
   static void textToSpeech(
       {@required String text, @required ValueChanged<bool> onResult}) async {
     SpeechApi.textTospeech(
@@ -80,6 +91,37 @@ class Utils {
     // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
   }
-  
-    
+
+  static void streamPosition(
+      {@required ValueChanged<Position> onResult}) async {
+    Geolocator.getPositionStream().listen((Position position) {
+      onResult(position);
+    });
+  }
+
+  static Future<BluetoothConnection> connectToBte({@required String address}) async {
+     BluetoothConnection connection ;
+    try {
+       connection =
+          await BluetoothConnection.toAddress(address);
+      print('Connected to the device');
+
+      connection.input.listen((Uint8List data) {
+        print('Data incoming: ${ascii.decode(data)}');
+      
+      }).onDone(() {
+        print('Disconnected by remote request');
+      });
+    } catch (exception) {
+      print('Cannot connect, exception occured');
+      print(exception);
+    }
+    return connection;
+  }
+  static void finishConnection({ BluetoothConnection connection}){
+          connection.finish(); // Closing connection
+          print('Disconnecting by local host');
+  } 
+
+
 }

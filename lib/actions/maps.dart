@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:walk_alone/actions/subject.dart';
 import 'package:walk_alone/api/google_maps_api.dart';
+import 'package:walk_alone/api/speech_api.dart';
+import 'package:walk_alone/config.dart';
 import 'package:walk_alone/model/Destination.dart';
+import 'package:walk_alone/model/Trip.dart';
 import 'package:walk_alone/utils.dart';
-import 'package:http/http.dart' as http;
+import 'package:walk_alone/model/DistanceMatrix.dart';
 
 class Maps {
   static bool ifAskedToConfirm = false;
   static bool userTalkAfterTextToSpeech = true;
   static bool multipleDestinations = false;
   static List<Destiantion> destinations = new List();
+  static String destinationSelected;
+  static DistanceMatrix distanceMatrix;
+  static Trip trip;
   static void mapsSubject(
       {@required String text, @required ValueChanged<bool> onResult}) async {
     var body = await scanText(text);
@@ -30,18 +38,23 @@ class Maps {
       body = await Utils.getTextAfterCommand(
           text: text, command: Command.destination);
       if (body == '') {
-        return body ='djkcsndchniosd';
-      } 
-       destinations = await GoogleMapsApi.findDestinations(body);
-       //print(destinations);
-       if (destinations.length == 1) {
-        body = destinations[0].adr + " la destination est trouvé voulez-vous confirmer ";
+        return body = 'S\'il te plaît, quelle est ta destination?';
+      }
+      destinations = await GoogleMapsApi.findDestinations(body);
+      print(destinations[0]);
+      if (destinations.length == 1) {
+        body = destinations[0].adr +
+            ". la destination est trouvé voulez-vous confirmer ";
+        destinationSelected = destinations[0].adr;
         ifAskedToConfirm = true;
       } else {
-      
         multipleDestinations = true;
-        body =
-            "Nous avons trouvé 2 destinations, choisissez-en une. 1 : Casa 2: Marrakech";
+        body = "Nous avons trouvé " +
+            destinations.length.toString() +
+            " destinations, choisissez-en une.";
+        for (int i = 0; i < destinations.length; i++) {
+          body += (i + 1).toString() + " " + destinations[i].adr;
+        }
       }
     } else if (multipleDestinations) {
       int choice = -1;
@@ -55,13 +68,38 @@ class Maps {
         body = "Le choix n'existe pas. Veuillez réessayer";
       } else {
         body = destinations[choice - 1].adr + Answer.confirm;
+        destinationSelected = destinations[choice - 1].adr;
         multipleDestinations = false;
         ifAskedToConfirm = true;
       }
     } else if (text.contains(Command.confirm) && ifAskedToConfirm) {
-      body = "ok";
       ifAskedToConfirm = false;
       userTalkAfterTextToSpeech = false;
+        SpeechApi.textTospeech(
+          text: Answer.blAConnecte,
+          onResult: (value) => {});
+ BluetoothConnection connection= await Utils.connectToBte(address: Config.adresseBLE);
+        if(connection!=null ){
+          print('Connection réussite');
+        }
+        else{
+         SpeechApi.textTospeech(
+          text: Answer.blNonConnecte,
+          onResult: (value) => {});
+        }
+
+      Position position = await Utils.determinePosition();
+      trip = await GoogleMapsApi.startWalking(
+          destination:
+              "Centre Jaber de la FSSM, Avenue Prince Moulay Abdullah, 46060 Marrakech, Maroc",
+          position: position);
+      print(trip);
+      SpeechApi.textTospeech(
+          text: Answer.distaneToFinish +
+              distanceMatrix.distanceTextToEnd.toString(),
+          onResult: (value) => {});
+
+      trip.streamPosition();
     } else if (text.contains(Command.cancel) && ifAskedToConfirm) {
       body = Answer.cancel;
       ifAskedToConfirm = false;
@@ -70,5 +108,10 @@ class Maps {
     }
 
     return body;
+  }
+
+  static void deleteDestination() {
+    Maps.destinationSelected = null;
+    Maps.destinations = null;
   }
 }

@@ -8,6 +8,7 @@ class SpeechApi {
   static final _speech = SpeechToText();
   static final _flutterTts = FlutterTts();
 
+
   static Future<bool> toggleRecording({
     @required Function(String text) onResult,
     @required ValueChanged<bool> onListening,

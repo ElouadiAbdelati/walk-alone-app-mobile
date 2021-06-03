@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:highlight_text/highlight_text.dart';
 import 'package:walk_alone/actions/maps.dart';
 import 'package:walk_alone/actions/welcome.dart';
+import 'package:walk_alone/api/google_maps_api.dart';
+import 'package:walk_alone/model/Destination.dart';
+import 'package:walk_alone/model/Trip.dart';
 import '../api/speech_api.dart';
 import '../utils.dart';
 import '../actions/subject.dart';
@@ -66,9 +70,32 @@ class _SpeechScreenState extends State<HomePage> {
         },
       );
 
-  void _textToSpeech() {
-    if (!_isListening) {
+  void _textToSpeech()async {
+     if (!_isListening) {
       Welcome.index(onResult: (value) => {toggleRecording()});
     }
+    
+    /* Position position = await Utils.determinePosition();
+      print(position);
+      Trip trip = await GoogleMapsApi.startWalking(
+          destination:
+              "Centre Jaber de la FSSM, Avenue Prince Moulay Abdullah, 46060 Marrakech, Maroc",
+          position: position);
+      print(trip.id);
+      SpeechApi.textTospeech(
+          text: Answer.distaneToFinish + trip.distanceValue.toString() + "métre", 
+          onResult: (value) => {});
+
+      trip.streamPosition();*/
+
+   //   Utils.connectToBte(address: "00:21:13:00:43:90");
+     
+     /* List<Destiantion> desc = await GoogleMapsApi.findDestinations("marrakech");
+      print(desc[0].adr);*/
+      
+      /*Position position = await Utils.determinePosition();
+      String r = await GoogleMapsApi.whereAmI(position);
+      print(r);*/
+
   }
 }
