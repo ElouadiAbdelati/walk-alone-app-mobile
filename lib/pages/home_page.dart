@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,9 +10,9 @@ import 'package:walk_alone/api/google_maps_api.dart';
 import 'package:walk_alone/model/Destination.dart';
 import 'package:walk_alone/model/Trip.dart';
 import '../api/speech_api.dart';
-import '../utils.dart';
 import '../actions/subject.dart';
 import '../actions/welcome.dart';
+import 'dart:io';
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,7 +22,7 @@ class HomePage extends StatefulWidget {
 class _SpeechScreenState extends State<HomePage> {
   bool _isListening = false;
   String _text = 'Press the button and start speaking';
-  double _confidence = 1.0;
+  // double _confidence = 1.0;
 
   @override
   Widget build(BuildContext context) {
@@ -98,4 +100,14 @@ class _SpeechScreenState extends State<HomePage> {
       print(r);*/
 
   }
+
+  // _getUserApi() async {
+  //   var httpClient = new HttpClient();
+  //   var uri =
+  //       new Uri.https('placesmapsapp.herokuapp.com ', '/api/places/fst');
+  //   var request = await httpClient.getUrl(uri);
+  //   var response = await request.close();
+  //   var responseBody = await response.transform(Utf8Decoder.decoder).join();
+  //   return responseBody;
+  // }
 }

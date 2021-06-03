@@ -10,7 +10,6 @@ import './api/speech_api.dart';
 import 'api/google_maps_api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 
 class Command {
   static const destination = 'je veux aller à';
@@ -58,7 +57,6 @@ class Utils {
   static Future<Position> determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
-
     // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {

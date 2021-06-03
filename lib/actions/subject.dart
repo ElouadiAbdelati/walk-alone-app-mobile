@@ -8,9 +8,9 @@ import 'package:walk_alone/utils.dart';
 class Subject {
   static final MAPS_SUBJECT = 1;
   static final NONE_SUBJECT = 0;
-  static final LOCATION_SUBJECT=2;
+  static final LOCATION_SUBJECT = 2;
   static int SUBJECT = NONE_SUBJECT;
-  
+
   static void findSubject(
       {@required String rawText, @required ValueChanged<bool> onResult}) async {
     var subject = await _scanText(rawText);
@@ -34,8 +34,8 @@ class Subject {
     if (text.contains(Command.destination)) {
       SUBJECT = MAPS_SUBJECT;
       return SUBJECT;
-    }else if(text.contains(Command.location)){
-        SUBJECT = LOCATION_SUBJECT;
+    } else if (text.contains(Command.location)) {
+      SUBJECT = LOCATION_SUBJECT;
       return SUBJECT;
     }
     return NONE_SUBJECT;

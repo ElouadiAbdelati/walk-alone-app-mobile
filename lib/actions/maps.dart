@@ -105,9 +105,7 @@ class Maps {
       ifAskedToConfirm = false;
       Subject.SUBJECT = Subject.NONE_SUBJECT;
       userTalkAfterTextToSpeech = false;
-    }
-
-    return body;
+    } else if (text.contains(Command.location)) return body;
   }
 
   static void deleteDestination() {
