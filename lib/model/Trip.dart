@@ -33,15 +33,17 @@ class Trip {
     Utils.streamPosition(onResult: (position) async { 
       DistanceMatrix distanceMatrix =
           await GoogleMapsApi.onWalking(trip: this, position: position);
+          //if the person changes its position
       if (distanceMatrix.change) {
         this.nextStepld++;
 
         String message = distanceMatrix.maneuver +
-            ",  " +
+            ",    " +
             Answer.distaneToFinish +
             distanceMatrix.distanceTextToEnd.toString();
         SpeechApi.textTospeech(text: message, onResult: (value) => {});
       }
+//check if the person is in the right trip
 
       if (this.nbrSteps + 1 == this.nextStepld) {
         GoogleMapsApi.finishWalking(trip: this);

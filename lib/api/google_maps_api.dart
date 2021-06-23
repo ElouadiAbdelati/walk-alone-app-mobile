@@ -36,10 +36,10 @@ class GoogleMapsApi {
     );
     Trip trip;
 
-    if (response.statusCode == 200) {
+   
       Map<String, dynamic> tripMap = json.decode(response.body.toString());
       trip = Trip.fromJson(tripMap);
-    }
+    
 
     return trip;
   }

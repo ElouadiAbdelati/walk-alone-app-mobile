@@ -4,12 +4,14 @@ import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:walk_alone/config.dart';
 import 'package:walk_alone/model/DistanceMatrix.dart';
 
 import './api/speech_api.dart';
 import 'api/google_maps_api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:vibration/vibration.dart';
 
 class Command {
   static const destination = 'je veux aller à';
@@ -97,16 +99,18 @@ class Utils {
     });
   }
 
-  static Future<BluetoothConnection> connectToBte({@required String address}) async {
-     BluetoothConnection connection ;
-    try {
-       connection =
-          await BluetoothConnection.toAddress(address);
-      print('Connected to the device');
-
-      connection.input.listen((Uint8List data) {
-        print('Data incoming: ${ascii.decode(data)}');
+  static Future<BluetoothConnection> connectToBte({@required  BluetoothConnection connection}) async {
       
+    try {
+    /*   connection =     await BluetoothConnection.toAddress(address);
+      print('Connected to the device');*/
+
+      connection.input.listen((Uint8List data) async{
+        print('Data incoming: ${ascii.decode(data)}');
+        if (await Vibration.hasAmplitudeControl()) {
+            Vibration.vibrate(amplitude: 128);
+      }
+           
       }).onDone(() {
         print('Disconnected by remote request');
       });
@@ -114,7 +118,33 @@ class Utils {
       print('Cannot connect, exception occured');
       print(exception);
     }
+     print('Disconnected ');
     return connection;
+  }
+
+  
+  static Future<List> testConnectionToBte({@required String address}) async {
+    
+     BluetoothConnection connection ;
+    try {
+       connection =
+          await BluetoothConnection.toAddress(address);
+        
+         if (connection== null) {
+            List resultReturn = [false, null];
+         return resultReturn;
+         }
+         else{
+            List resultReturn = [true, connection];
+         return resultReturn;
+         }
+         
+    } catch (exception) {
+      print('Cannot connect, exception occured');
+      print(exception);
+    }
+    
+    return [true,connection];
   }
   static void finishConnection({ BluetoothConnection connection}){
           connection.finish(); // Closing connection

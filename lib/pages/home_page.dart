@@ -73,11 +73,14 @@ class _SpeechScreenState extends State<HomePage> {
       );
 
   void _textToSpeech()async {
+
+     GoogleMapsApi.findDestinations("marrakech");
+/* 
      if (!_isListening) {
       Welcome.index(onResult: (value) => {toggleRecording()});
     }
     
-    /* Position position = await Utils.determinePosition();
+    Position position = await Utils.determinePosition();
       print(position);
       Trip trip = await GoogleMapsApi.startWalking(
           destination:

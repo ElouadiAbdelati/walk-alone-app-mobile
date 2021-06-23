@@ -41,8 +41,9 @@ class Maps {
         return body = 'S\'il te plaît, quelle est ta destination?';
       }
       destinations = await GoogleMapsApi.findDestinations(body);
-      print(destinations[0]);
+      print(destinations[0].adr);
       if (destinations.length == 1) {
+        print("find ");
         body = destinations[0].adr +
             ". la destination est trouvé voulez-vous confirmer ";
         destinationSelected = destinations[0].adr;
@@ -75,37 +76,47 @@ class Maps {
     } else if (text.contains(Command.confirm) && ifAskedToConfirm) {
       ifAskedToConfirm = false;
       userTalkAfterTextToSpeech = false;
-        SpeechApi.textTospeech(
-          text: Answer.blAConnecte,
-          onResult: (value) => {});
- BluetoothConnection connection= await Utils.connectToBte(address: Config.adresseBLE);
-        if(connection!=null ){
-          print('Connection réussite');
-        }
-        else{
-         SpeechApi.textTospeech(
-          text: Answer.blNonConnecte,
-          onResult: (value) => {});
-        }
+      List resTestCon = await  Utils.testConnectionToBte(address: Config.adresseBLE);
+      if (resTestCon[0]==false){
+         SpeechApi.textTospeech(text: Answer.blAConnecte, onResult: (value) => {
+              Maps.deleteDestination(),
+              Subject.deleteSubject()
+           
+         });
+       }else {
+           print('tester avant ble');
+           BluetoothConnection connection = await Utils.connectToBte(connection: resTestCon[1]);
+            print('tester apres ble');
 
-      Position position = await Utils.determinePosition();
-      trip = await GoogleMapsApi.startWalking(
-          destination:
-              "Centre Jaber de la FSSM, Avenue Prince Moulay Abdullah, 46060 Marrakech, Maroc",
-          position: position);
-      print(trip);
-      SpeechApi.textTospeech(
+            if (connection!= null) {
+             print('Connection réussite');
+           } else {
+          SpeechApi.textTospeech(
+            text: Answer.blNonConnecte, onResult: (value) => {});
+           }
+          Position position = await Utils.determinePosition();
+
+          trip = await GoogleMapsApi.startWalking(
+          destination: destinationSelected, position: position);
+          print(trip.id);
+      
+          SpeechApi.textTospeech(
           text: Answer.distaneToFinish +
-              distanceMatrix.distanceTextToEnd.toString(),
+              trip.distanceValue.toString(),
           onResult: (value) => {});
 
-      trip.streamPosition();
+           trip.streamPosition();
+       }
+     
+      
+
     } else if (text.contains(Command.cancel) && ifAskedToConfirm) {
       body = Answer.cancel;
       ifAskedToConfirm = false;
       Subject.SUBJECT = Subject.NONE_SUBJECT;
       userTalkAfterTextToSpeech = false;
-    } else if (text.contains(Command.location)) return body;
+    } 
+    return body;
   }
 
   static void deleteDestination() {
