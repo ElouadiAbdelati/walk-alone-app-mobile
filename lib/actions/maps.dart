@@ -76,46 +76,47 @@ class Maps {
     } else if (text.contains(Command.confirm) && ifAskedToConfirm) {
       ifAskedToConfirm = false;
       userTalkAfterTextToSpeech = false;
-      List resTestCon = await  Utils.testConnectionToBte(address: Config.adresseBLE);
-      if (resTestCon[0]==false){
-         SpeechApi.textTospeech(text: Answer.blAConnecte, onResult: (value) => {
-              Maps.deleteDestination(),
-              Subject.deleteSubject()
-           
-         });
-       }else {
-           print('tester avant ble');
-           BluetoothConnection connection = await Utils.connectToBte(connection: resTestCon[1]);
-            print('tester apres ble');
+      List resTestCon =
+          await Utils.testConnectionToBte(address: Config.adresseBLE);
+      if (resTestCon[0] == false) {
+        SpeechApi.textTospeech(
+            text: Answer.blAConnecte,
+            onResult: (value) =>
+                {Maps.deleteDestination(), Subject.deleteSubject()});
+      } else {
+        print('tester avant ble');
+        BluetoothConnection connection =
+            await Utils.connectToBte(connection: resTestCon[1]);
+        print('tester apres ble');
 
-            if (connection!= null) {
-             print('Connection réussite');
-           } else {
+        if (connection != null) {
+          print('Connection réussite');
+        } else {
           SpeechApi.textTospeech(
-            text: Answer.blNonConnecte, onResult: (value) => {});
-           }
-          Position position = await Utils.determinePosition();
+              text: Answer.blNonConnecte, onResult: (value) => {});
+        }
+        Position position = await Utils.determinePosition();
+        print('startWalking');
+        trip = await GoogleMapsApi.startWalking(
+            destination: destinationSelected, position: position);
+        print(' after startWalking ');
 
-          trip = await GoogleMapsApi.startWalking(
-          destination: destinationSelected, position: position);
-          print(trip.id);
-      
-          SpeechApi.textTospeech(
-          text: Answer.distaneToFinish +
-              trip.distanceValue.toString(),
-          onResult: (value) => {});
+        print(trip.id);
+        print("nbrSteps" + trip.nbrSteps.toString());
+        print("nbrSteps" + trip.nextStepld.toString());
 
-           trip.streamPosition();
-       }
-     
-      
+        SpeechApi.textTospeech(
+            text: Answer.distaneToFinish + trip.distanceValue.toString(),
+            onResult: (value) => {});
 
+        trip.streamPosition();
+      }
     } else if (text.contains(Command.cancel) && ifAskedToConfirm) {
       body = Answer.cancel;
       ifAskedToConfirm = false;
       Subject.SUBJECT = Subject.NONE_SUBJECT;
       userTalkAfterTextToSpeech = false;
-    } 
+    }
     return body;
   }
 

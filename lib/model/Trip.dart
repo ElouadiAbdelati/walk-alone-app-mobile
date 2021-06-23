@@ -30,22 +30,26 @@ class Trip {
   }
 
   void streamPosition() async {
-    Utils.streamPosition(onResult: (position) async { 
+    Utils.streamPosition(onResult: (position) async {
+      print("befor onwal");
       DistanceMatrix distanceMatrix =
           await GoogleMapsApi.onWalking(trip: this, position: position);
-          //if the person changes its position
+      print("after onwal");
+      print(distanceMatrix);
+      //if the person changes its position
       if (distanceMatrix.change) {
         this.nextStepld++;
 
         String message = distanceMatrix.maneuver +
-            ",    " +
+            "," +
             Answer.distaneToFinish +
             distanceMatrix.distanceTextToEnd.toString();
         SpeechApi.textTospeech(text: message, onResult: (value) => {});
       }
 //check if the person is in the right trip
-
-      if (this.nbrSteps + 1 == this.nextStepld) {
+      print("nbrSteps" + this.nbrSteps.toString());
+      print("NextStep" + this.nextStepld.toString());
+      if ((this.nbrSteps + 1) == this.nextStepld) {
         GoogleMapsApi.finishWalking(trip: this);
         Subject.deleteSubject();
         Maps.deleteDestination();
