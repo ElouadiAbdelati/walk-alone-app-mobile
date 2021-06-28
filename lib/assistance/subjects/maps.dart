@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:walk_alone/actions/subject.dart';
 import 'package:walk_alone/api/google_maps_api.dart';
 import 'package:walk_alone/api/speech_api.dart';
 import 'package:walk_alone/config.dart';
@@ -9,7 +8,9 @@ import 'package:walk_alone/model/Destination.dart';
 import 'package:walk_alone/model/Trip.dart';
 import 'package:walk_alone/utils.dart';
 import 'package:walk_alone/model/DistanceMatrix.dart';
-
+import 'package:walk_alone/assistance/findSubject.dart';
+import 'package:walk_alone/assistance/command.dart';
+import 'package:walk_alone/assistance/answer.dart';
 class Maps {
   static bool ifAskedToConfirm = false;
   static bool userTalkAfterTextToSpeech = true;

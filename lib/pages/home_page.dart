@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:avatar_glow/avatar_glow.dart';
-import 'package:walk_alone/actions/maps.dart';
-import 'package:walk_alone/actions/welcome.dart';
+import '../api/google_maps_api.dart';
 import '../api/speech_api.dart';
-import '../actions/subject.dart';
-import '../actions/welcome.dart';
+
+import '../assistance/welcome.dart';
+import '../assistance/subjects/maps.dart';
+import '../assistance/findSubject.dart';
 
 class HomePage extends StatefulWidget {
   @override

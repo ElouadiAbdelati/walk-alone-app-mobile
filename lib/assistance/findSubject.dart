@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:walk_alone/actions/maps.dart';
+import 'package:walk_alone/assistance/subjects/maps.dart';
 import 'package:walk_alone/api/google_maps_api.dart';
 import 'package:walk_alone/api/speech_api.dart';
 import 'package:walk_alone/utils.dart';
+import 'package:walk_alone/assistance/findSubject.dart';
+import 'package:walk_alone/assistance/command.dart';
+import 'package:walk_alone/assistance/answer.dart';
+import 'package:walk_alone/assistance/subjects/currentPosition.dart';
+
 
 class Subject {
   /**
@@ -36,12 +41,7 @@ class Subject {
           onResult: (_isFinishing) => {onResult(_isFinishing)},
           text: Answer.subjectNotDefined);
     } else if (subject == LOCATION_SUBJECT) {
-      Position position = await Utils.determinePosition();
-      String currentPosition = await GoogleMapsApi.whereAmI(position);
-      SpeechApi.textTospeech(
-          onResult: (_isFinishing) => {},
-          text: Answer.currentPosition + currentPosition);
-      deleteSubject();
+       CurrentPosition.currentPositionSubject();
     }
   }
 

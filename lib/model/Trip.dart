@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:walk_alone/actions/maps.dart';
-import 'package:walk_alone/actions/subject.dart';
+import 'package:walk_alone/assistance/subjects/maps.dart';
+import 'package:walk_alone/assistance/findSubject.dart';
 import 'package:walk_alone/api/google_maps_api.dart';
 import 'package:walk_alone/api/speech_api.dart';
 import 'package:walk_alone/model/DistanceMatrix.dart';
 import 'package:walk_alone/utils.dart';
+import 'package:walk_alone/assistance/command.dart';
+import 'package:walk_alone/assistance/answer.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Trip {
