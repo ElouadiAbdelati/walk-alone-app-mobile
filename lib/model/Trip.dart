@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:walk_alone/actions/maps.dart';
 import 'package:walk_alone/actions/subject.dart';
@@ -10,7 +9,7 @@ import 'package:walk_alone/utils.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Trip {
-  int nextStepld = 1;
+  int nextStepld = 0;
   String id;
   int nbrSteps;
   int durationValue;

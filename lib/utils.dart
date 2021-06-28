@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
+
 import 'dart:typed_data';
 
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:walk_alone/config.dart';
-import 'package:walk_alone/model/DistanceMatrix.dart';
 
 import './api/speech_api.dart';
-import 'api/google_maps_api.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:vibration/vibration.dart';
@@ -28,11 +26,19 @@ class Answer {
   static const confirm = "voulez-vous confirmer ?";
   static const distaneToFinish = "Il vous reste, ";
   static const currentPosition = "Votre position actuelle est : ";
-  static const blAConnecte = "Veuillez activer votre bluetooth et entrer le mot de passe bluetooth  ";
-  static const blNonConnecte = "Veuillez vérifier la connexion avec bluetooth ou réssayer ultérieurement ";
-  
+  static const blAConnecte =
+      "Veuillez activer votre bluetooth et entrer le mot de passe bluetooth  ";
+  static const blNonConnecte =
+      "Veuillez vérifier la connexion avec bluetooth ou réssayer ultérieurement ";
+
   static const finishWalking =
       "Félicitation, vous êtes arrivés à votre destination. Merci.";
+  static const bodyOfDestinationIsEmpty =
+      'S\'il vous plaît, quelle est votre destination?';
+  static const askedToChooseDestination =
+      ". la destination est trouvé voulez-vous confirmer ";
+  static const destinationChosenNotExist =
+      "Le choix n'existe pas. Veuillez réessayer";
 }
 
 class Utils {
@@ -99,18 +105,17 @@ class Utils {
     });
   }
 
-  static Future<BluetoothConnection> connectToBte({@required  BluetoothConnection connection}) async {
-      
+  static Future<BluetoothConnection> connectToBte(
+      {@required BluetoothConnection connection}) async {
     try {
-    /*   connection =     await BluetoothConnection.toAddress(address);
+      /*   connection =     await BluetoothConnection.toAddress(address);
       print('Connected to the device');*/
 
-      connection.input.listen((Uint8List data) async{
+      connection.input.listen((Uint8List data) async {
         print('Data incoming: ${ascii.decode(data)}');
         if (await Vibration.hasAmplitudeControl()) {
-            Vibration.vibrate(amplitude: 128);
-      }
-           
+          Vibration.vibrate(amplitude: 128);
+        }
       }).onDone(() {
         print('Disconnected by remote request');
       });
@@ -118,38 +123,32 @@ class Utils {
       print('Cannot connect, exception occured');
       print(exception);
     }
-     print('Disconnected ');
+    print('Disconnected ');
     return connection;
   }
 
-  
   static Future<List> testConnectionToBte({@required String address}) async {
-    
-     BluetoothConnection connection ;
+    BluetoothConnection connection;
     try {
-       connection =
-          await BluetoothConnection.toAddress(address);
-        
-         if (connection== null) {
-            List resultReturn = [false, null];
-         return resultReturn;
-         }
-         else{
-            List resultReturn = [true, connection];
-         return resultReturn;
-         }
-         
+      connection = await BluetoothConnection.toAddress(address);
+
+      if (connection == null) {
+        List resultReturn = [false, null];
+        return resultReturn;
+      } else {
+        List resultReturn = [true, connection];
+        return resultReturn;
+      }
     } catch (exception) {
       print('Cannot connect, exception occured');
       print(exception);
     }
-    
-    return [true,connection];
+
+    return [true, connection];
   }
-  static void finishConnection({ BluetoothConnection connection}){
-          connection.finish(); // Closing connection
-          print('Disconnecting by local host');
-  } 
 
-
+  static void finishConnection({BluetoothConnection connection}) {
+    connection.finish(); // Closing connection
+    print('Disconnecting by local host');
+  }
 }

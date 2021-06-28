@@ -18,6 +18,10 @@ class Maps {
   static String destinationSelected;
   static DistanceMatrix distanceMatrix;
   static Trip trip;
+
+/**
+ * Cette fonction traite tous les sujets de navigation
+ */
   static void mapsSubject(
       {@required String text, @required ValueChanged<bool> onResult}) async {
     var body = await scanText(text);
@@ -33,19 +37,19 @@ class Maps {
 
   static Future<String> scanText(String text) async {
     text = text.toLowerCase();
+    //Body est le texte résultant de l'analyse
     var body;
     if (text.contains(Command.destination)) {
       body = await Utils.getTextAfterCommand(
           text: text, command: Command.destination);
       if (body == '') {
-        return body = 'S\'il te plaît, quelle est ta destination?';
+        return body = Answer.bodyOfDestinationIsEmpty;
       }
+
       destinations = await GoogleMapsApi.findDestinations(body);
-      print(destinations[0].adr);
+      //S'il a trouvé un seul résultat
       if (destinations.length == 1) {
-        print("find ");
-        body = destinations[0].adr +
-            ". la destination est trouvé voulez-vous confirmer ";
+        body = destinations[0].adr + Answer.askedToChooseDestination;
         destinationSelected = destinations[0].adr;
         ifAskedToConfirm = true;
       } else {
@@ -66,7 +70,7 @@ class Maps {
         }
       }
       if (choice == -1) {
-        body = "Le choix n'existe pas. Veuillez réessayer";
+        body = Answer.destinationChosenNotExist;
       } else {
         body = destinations[choice - 1].adr + Answer.confirm;
         destinationSelected = destinations[choice - 1].adr;
@@ -75,7 +79,9 @@ class Maps {
       }
     } else if (text.contains(Command.confirm) && ifAskedToConfirm) {
       ifAskedToConfirm = false;
+      //Début du traitement de la navigation, donc on doit pas donner la main à l'utilisateur pour parler
       userTalkAfterTextToSpeech = false;
+      //Ici on doit vérifier la connexion avec le connecteur Bluetooth
       List resTestCon =
           await Utils.testConnectionToBte(address: Config.adresseBLE);
       if (resTestCon[0] == false) {
@@ -84,11 +90,8 @@ class Maps {
             onResult: (value) =>
                 {Maps.deleteDestination(), Subject.deleteSubject()});
       } else {
-        print('tester avant ble');
         BluetoothConnection connection =
             await Utils.connectToBte(connection: resTestCon[1]);
-        print('tester apres ble');
-
         if (connection != null) {
           print('Connection réussite');
         } else {
@@ -99,11 +102,6 @@ class Maps {
         print('startWalking');
         trip = await GoogleMapsApi.startWalking(
             destination: destinationSelected, position: position);
-        print(' after startWalking ');
-
-        print(trip.id);
-        print("nbrSteps" + trip.nbrSteps.toString());
-        print("nbrSteps" + trip.nextStepld.toString());
 
         SpeechApi.textTospeech(
             text: Answer.distaneToFinish + trip.distanceValue.toString(),

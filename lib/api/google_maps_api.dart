@@ -1,15 +1,15 @@
 import 'dart:convert';
-
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:walk_alone/model/Destination.dart';
 import 'package:walk_alone/model/DistanceMatrix.dart';
 import 'package:walk_alone/model/Trip.dart';
-import 'package:walk_alone/utils.dart';
 import '../config.dart';
 
 class GoogleMapsApi {
+  /**
+   * Cette fonction donne le résultat de larecherche de la destination choisie
+   */
   static Future<List<Destiantion>> findDestinations(String destination) async {
     dynamic response = await http.get(
         (Uri.http(Config.API, Config.SERVICEFINDDESTINATIONS + destination)));
@@ -36,17 +36,14 @@ class GoogleMapsApi {
     );
     Trip trip;
 
-   
-      Map<String, dynamic> tripMap = json.decode(response.body.toString());
-      trip = Trip.fromJson(tripMap);
-    
+    Map<String, dynamic> tripMap = json.decode(response.body.toString());
+    trip = Trip.fromJson(tripMap);
 
     return trip;
   }
 
   static Future<DistanceMatrix> onWalking(
       {Trip trip, Position position}) async {
-     
     dynamic reponse = await http.post(
       Uri.http(Config.API, Config.SERVICESONWALKING),
       headers: <String, String>{
@@ -59,11 +56,11 @@ class GoogleMapsApi {
         'originLng': position.longitude.toString()
       }),
     );
-     print(reponse.body.toString());
-     Map<String, dynamic> disMap = json.decode(reponse.body.toString());
-     DistanceMatrix distanceMatrix = DistanceMatrix.fromJson(disMap);
+    print(reponse.body.toString());
+    Map<String, dynamic> disMap = json.decode(reponse.body.toString());
+    DistanceMatrix distanceMatrix = DistanceMatrix.fromJson(disMap);
 
-     print(distanceMatrix.distanceValueToEnd);
+    print(distanceMatrix.distanceValueToEnd);
     return distanceMatrix;
   }
 
