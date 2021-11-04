@@ -2,7 +2,7 @@
 
 # Partie mobile
 
-Réaliser des chaussures intelligentes et une application mobile totalement contrôler par la voix pour aider les personnes malvoyantes.
+ projet: Réaliser des chaussures intelligentes et une application mobile totalement contrôler par la voix pour aider les personnes malvoyantes.
 
 # Les finalités du projet: 
   -  La partie de détection des obstacles <br/>
